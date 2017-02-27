@@ -1,2 +1,2 @@
-# cs162-process-scheduler
+# CS612 Process Scheduler
 Process scheduler simulation
