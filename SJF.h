@@ -66,6 +66,14 @@ void srtf(vector<Process> set){
     int size = set.size();
     int time = 0;
     
+    std::sort(set.begin(), set.end(), compareArrivalTime);
+
+    for(int i = 0; i < size; i++){
+        if(set[i].arrival > time){
+            time = set[i].arrival;
+        }
+    }
+
 }
 
 #endif
