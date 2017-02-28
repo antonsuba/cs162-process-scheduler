@@ -19,6 +19,7 @@ int main(){
         string algorithm;
 
         cin >> processCount >> algorithm;
+        vector<Process> set;
 
         if(algorithm == "RR"){
             cin >> interval;
@@ -31,9 +32,11 @@ int main(){
             cin >> arrival >> burstTime >> priority;
 
             Process process(j + 1, arrival, burstTime, priority);
-
+            set.push_back(process);
             //pArray[j] = process;
         }
+
+        fcfs(set);
     }
 
     return 0;
