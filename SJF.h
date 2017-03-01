@@ -44,16 +44,7 @@ bool compareArrivalTime(Process p1, Process p2){
     return (p1.arrival < p2.arrival);
 }
 
-<<<<<<< HEAD
 bool compareShortestRemaining(Process p1, Process p2){
-    /*if(p1.arrival < p2.arrival){
-        return (p1.arrival + p1.burstTime < p1.arrival + p2.arrival + p2.burstTime);
-    } else if(p1.arrival == p2.arrival){
-        return (p1.burstTime < p2.burstTime);
-    } else{
-        return (p2.arrival + p1.burstTime < p2.arrival + p1.arrival + p2.burstTime);
-    }*/
-
     return (p1.arrival <= p2.arrival && p1.burstTime < p2.burstTime);
 }
 
@@ -69,7 +60,7 @@ void fcfs(std::vector<Process> set){
             time = set[i].arrival;
         }
 
-        std::cout << time << " " << set[i].index << " " << set[i].burstTime << std::endl;
+        std::cout << time << " " << set[i].index << " " << set[i].burstTime << "X" << std::endl;
         time += set[i].burstTime;
     }
 }
