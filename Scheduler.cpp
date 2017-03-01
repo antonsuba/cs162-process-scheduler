@@ -34,21 +34,20 @@ int main(){
             Process process(j + 1, arrival, burstTime, priority);
             
             queue.push(process);
+            set.push_back(process);
         }
 
         int time = 0;
         while(!queue.empty()){
             Process p = queue.top();
-            cout << time << " " << p.index << " " << p.burstTime << "X" << endl;
+            //cout << time << " " << p.index << " " << p.burstTime << "X" << endl;
 
             time += p.burstTime;
 
             queue.pop();
-
-            set.push_back(process);
         }
 
-        fcfs(set);
+        srtf(set);
     }
 
     return 0;
