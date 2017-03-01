@@ -1,6 +1,16 @@
 #ifndef _SJF_h
 #define _SJF_h
 
+#include <iostream>
+#include <cstdio>
+#include <string>
+#include <stdlib.h>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
 struct Process{
     int index;
     int arrival;
@@ -24,9 +34,9 @@ struct SJFComparator{
         if(p1.arrival >= currentTime){
             currentTime = p1.burstTime;
             index = p1.index;
-            return false;
+            return true;
         }
-        return (p1.burstTime < p2.burstTime) || p2.index == index;
+        return (p1.burstTime > p2.burstTime) || p2.index == index;
     }
 };
 
@@ -34,6 +44,7 @@ bool compareArrivalTime(Process p1, Process p2){
     return (p1.arrival < p2.arrival);
 }
 
+<<<<<<< HEAD
 bool compareShortestRemaining(Process p1, Process p2){
     /*if(p1.arrival < p2.arrival){
         return (p1.arrival + p1.burstTime < p1.arrival + p2.arrival + p2.burstTime);
@@ -51,7 +62,7 @@ void fcfs(std::vector<Process> set){
     int size = set.size();
     int time = 0;
 
-    std::sort(set.begin(), set.end(), compareArrivalTime);
+    sort(set.begin(), set.end(), compareArrivalTime);
 
     for(int i = 0; i < size; i++){
         if(set[i].arrival >= time){
@@ -63,7 +74,7 @@ void fcfs(std::vector<Process> set){
     }
 }
 
-void srtf(std::vector<Process> set){
+void srtf(vector<Process> set){
     int size = set.size();
     int time = 0;
     
