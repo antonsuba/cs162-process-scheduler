@@ -42,7 +42,17 @@ int main(){
             queue.pop();
         }
 
-        fcfs(set);
+        if(algorithm == "FCFS"){
+            fcfs(set);
+        } else if(algorithm == "SJF"){
+            //sjf(set);
+        } else if(algorithm == "SRTF"){
+            srtf(set);
+        } else if(algorithm == "P"){
+            p(set);
+        } else if(algorithm == "RR"){
+            //rr(set);
+        }
     }
 
     return 0;
