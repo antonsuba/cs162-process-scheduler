@@ -25,20 +25,42 @@ int main(){
         if(algorithm == "RR"){
             cin >> interval;
         }
-
+        priority_queue<Process, vector<Process>, SJFComparator> queue;
         //Sort processes by arriaval time
         for(int j = 0; j < processCount; j++){
             int arrival, burstTime, priority;
             cin >> arrival >> burstTime >> priority;
 
             Process process(j + 1, arrival, burstTime, priority);
-
+            
+            queue.push(process);
             set.push_back(process);
         }
         //fcfs(set);
 
         sjf(set);
 
+        int time = 0;
+        while(!queue.empty()){
+            Process p = queue.top();
+            //cout << time << " " << p.index << " " << p.burstTime << "X" << endl;
+
+            time += p.burstTime;
+
+            queue.pop();
+        }
+
+        if(algorithm == "FCFS"){
+            fcfs(set);
+        } else if(algorithm == "SJF"){
+            //sjf(set);
+        } else if(algorithm == "SRTF"){
+            srtf(set);
+        } else if(algorithm == "P"){
+            p(set);
+        } else if(algorithm == "RR"){
+            //rr(set);
+        }
     }
 
     return 0;
