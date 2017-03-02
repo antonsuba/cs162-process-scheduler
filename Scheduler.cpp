@@ -1,4 +1,12 @@
-#include "SJF.h"
+#include <iostream>
+#include <cstdio>
+#include <string>
+#include <stdlib.h>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+#include "Algorithms.h"
 
 using namespace std;
 
@@ -26,8 +34,10 @@ int main(){
             Process process(j + 1, arrival, burstTime, priority);
 
             set.push_back(process);
-            fcfs(set);
         }
+        //fcfs(set);
+
+        sjf(set);
 
     }
 
