@@ -21,6 +21,9 @@ struct Process{
 // Helper Functions
 //-------------------------
 bool compareArrivalTime(Process p1, Process p2){
+    if(p1.arrival == p2.arrival){
+        return p1.burstTime < p2.burstTime;
+    }
     return p1.arrival < p2.arrival;
 }
 
@@ -45,7 +48,7 @@ int searchBurstCoverage(vector<Process> set, int left, int right, int burstTime)
         if(set[middle].arrival > burstTime){
             right = middle - 1;
         }
-        else if(set[middle].arrival < burstTime){
+        else if(set[middle].arrival < burstTime || set[middle].arrival == burstTime){
             retVal = middle;
             left = middle + 1;
         }
@@ -75,24 +78,25 @@ void sjf(vector<Process> set){
     int size = set.size();
     int quantum = 0;
     int runTime = 0;
+    int next =  0;
 
     sort(set.begin(), set.end(), compareArrivalTime);
 
     for(int i = 0; i < size; i++){
-        if(set[i].arrival >= quantum){
-            quantum = set[i].burstTime;
+        //cout << "runTime:" << runTime << endl;
+        cout << runTime << " " << set[i].index << " " << set[i].burstTime << "X" << endl;
+        runTime+= set[i].burstTime;
 
-            //Sort processes covered by previous process' burst time by shortest job
+        if(set[next].arrival <= runTime){
+            //Sort processes covered by current run time
             if(i < size - 1){
-                int burstCoverage = searchBurstCoverage(set, i + 1, size - 1, quantum);
-                //cout << "coverage:" << burstCoverage << endl;
-                if(burstCoverage != 0){
+                int burstCoverage = searchBurstCoverage(set, i + 1, size - 1, runTime);
+                if(burstCoverage >= 0){
                     sort(set.begin()+i+1, set.begin()+burstCoverage+1, compareBurstTime);
+                    next = burstCoverage + 1;
                 }
             }
         }
-        cout << runTime << " " << set[i].index << " " << set[i].burstTime << "X" << endl;
-        runTime+= set[i].burstTime;
     }
 }
 
