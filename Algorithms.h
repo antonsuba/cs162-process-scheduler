@@ -133,7 +133,7 @@ void srtf(vector<Process> set){
             } else{
                 runTime = set[i].burstTime;
                 for(int j = i; j < size; j++){
-                    if(set[j].arrival < time + set[i].burstTime && time + set[j].burstTime < time + set[i].burstTime){
+                    if(set[j].arrival < time + set[i].burstTime && time + set[j].burstTime < (time + set[i].burstTime) - (set[j].arrival - time)){
                         runTime = set[j].arrival - time;
                         i--;
                         break;

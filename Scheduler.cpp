@@ -35,7 +35,7 @@ int main(){
             
             set.push_back(process);
         }
-
+         
         if(algorithm == "FCFS"){
             fcfs(set);
         } else if(algorithm == "SJF"){
