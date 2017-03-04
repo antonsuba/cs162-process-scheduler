@@ -42,6 +42,8 @@ int main(){
             queue.pop();
         }
 
+        cout << i+1 << endl;
+
         if(algorithm == "FCFS"){
             fcfs(set);
         } else if(algorithm == "SJF"){
