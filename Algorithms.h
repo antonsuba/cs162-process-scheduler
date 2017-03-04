@@ -1,14 +1,6 @@
 #ifndef _SJF_h
 #define _SJF_h
 
-#include <iostream>
-#include <cstdio>
-#include <string>
-#include <stdlib.h>
-#include <queue>
-#include <vector>
-#include <algorithm>
-
 using namespace std;
 
 struct Process{
@@ -25,23 +17,18 @@ struct Process{
     }
 };
 
-struct SJFComparator{
-    int currentTime;
-    int index;
-
-    bool operator()(const Process &p1, const Process &p2)
-    { 
-        if(p1.arrival >= currentTime){
-            currentTime = p1.burstTime;
-            index = p1.index;
-            return true;
-        }
-        return (p1.burstTime > p2.burstTime) || p2.index == index;
-    }
-};
-
+//-------------------------
+// Helper Functions
+//-------------------------
 bool compareArrivalTime(Process p1, Process p2){
-    return (p1.arrival < p2.arrival);
+    if(p1.arrival == p2.arrival){
+        return p1.burstTime < p2.burstTime;
+    }
+    return p1.arrival < p2.arrival;
+}
+
+bool compareBurstTime(Process p1, Process p2){
+    return p1.burstTime < p2.burstTime;
 }
 
 bool compareShortestRemaining(Process p1, Process p2){
@@ -52,8 +39,27 @@ bool comparePriority(Process p1, Process p2){
     return (p1.arrival <= p2.arrival && p1.priority < p2.priority);
 }
 
-void fcfs(std::vector<Process> set){
-    //int size = sizeof(set)/sizeof(set[0]);
+int searchBurstCoverage(vector<Process> set, int left, int right, int burstTime){
+    int retVal = 0;
+    //cout << "left:" << left << "  right:" << right << " burst:" << burstTime << endl;
+    while(left <= right){
+        int middle = (left + right) / 2;
+        //cout << "mid:" << middle << endl;
+        if(set[middle].arrival > burstTime){
+            right = middle - 1;
+        }
+        else if(set[middle].arrival < burstTime || set[middle].arrival == burstTime){
+            retVal = middle;
+            left = middle + 1;
+        }
+    }
+    return retVal;
+}
+
+//-------------------------
+// Scheduling Algorithms
+//-------------------------
+void fcfs(vector<Process> set){
     int size = set.size();
     int time = 0;
 
@@ -63,9 +69,34 @@ void fcfs(std::vector<Process> set){
         if(set[i].arrival >= time){
             time = set[i].arrival;
         }
+        cout << time << " " << set[i].index << " " << set[i].burstTime << "X" << endl;
+        time+= set[i].burstTime;
+    }
+}
 
-        std::cout << time << " " << set[i].index << " " << set[i].burstTime << "X" << std::endl;
-        time += set[i].burstTime;
+void sjf(vector<Process> set){
+    int size = set.size();
+    int quantum = 0;
+    int runTime = 0;
+    int next =  0;
+
+    sort(set.begin(), set.end(), compareArrivalTime);
+
+    for(int i = 0; i < size; i++){
+        //cout << "runTime:" << runTime << endl;
+        cout << runTime << " " << set[i].index << " " << set[i].burstTime << "X" << endl;
+        runTime+= set[i].burstTime;
+
+        if(set[next].arrival <= runTime){
+            //Sort processes covered by current run time
+            if(i < size - 1){
+                int burstCoverage = searchBurstCoverage(set, i + 1, size - 1, runTime);
+                if(burstCoverage >= 0){
+                    sort(set.begin()+i+1, set.begin()+burstCoverage+1, compareBurstTime);
+                    next = burstCoverage + 1;
+                }
+            }
+        }
     }
 }
 
@@ -73,8 +104,8 @@ void srtf(vector<Process> set){
     int size = set.size();
     int time = 0;
     
-    std::sort(set.begin(), set.end(), compareArrivalTime);
-    std::sort(set.begin(), set.end(), compareShortestRemaining);
+    sort(set.begin(), set.end(), compareArrivalTime);
+    sort(set.begin(), set.end(), compareShortestRemaining);
 
     for(int i = 0; i < size; i++){
         if(set[i].burstTime > 0){
@@ -82,15 +113,15 @@ void srtf(vector<Process> set){
                 time = set[i].arrival;
             }
 
-            std::sort(set.begin(), set.end(), compareShortestRemaining);
+            sort(set.begin(), set.end(), compareShortestRemaining);
             
-            /*std::cout << std::endl;
-            std::cout << "SET:" << std::endl;
+            /*cout << endl;
+            cout << "SET:" << endl;
             for(int j = 0; j < size; j++){
-                std::cout << set[j].index << " " << set[j].arrival << " " << set[j].burstTime << " " << set[j].priority << std::endl;
+                cout << set[j].index << " " << set[j].arrival << " " << set[j].burstTime << " " << set[j].priority << endl;
             }
-            std::cout << "TIME: " << time << std::endl;
-            std::cout << std::endl;*/
+            cout << "TIME: " << time << endl;
+            cout << endl;*/
 
             int index = i;
             int runTime = 0;
@@ -119,9 +150,9 @@ void srtf(vector<Process> set){
             }
 
             if(set[index].burstTime > 0){
-                std::cout << time << " " << set[index].index << " " << runTime << std::endl;
+                cout << time << " " << set[index].index << " " << runTime << endl;
             } else{
-                std::cout << time << " " << set[index].index << " " << runTime << "X" << std::endl;
+                cout << time << " " << set[index].index << " " << runTime << "X" << endl;
             }
 
             time += runTime;
@@ -130,12 +161,12 @@ void srtf(vector<Process> set){
 
 }
 
-void p(std::vector<Process> set){
+void p(vector<Process> set){
     int size = set.size();
     int time = 0;
 
-    std::sort(set.begin(), set.end(), compareArrivalTime);
-    std::sort(set.begin(), set.end(), comparePriority);
+    sort(set.begin(), set.end(), compareArrivalTime);
+    sort(set.begin(), set.end(), comparePriority);
 
     for(int i = 0; i < size; i++){
         if(set[i].burstTime > 0){
@@ -143,15 +174,7 @@ void p(std::vector<Process> set){
                 time = set[i].arrival;
             }
 
-            std::sort(set.begin(), set.end(), comparePriority);
-            
-            /*std::cout << std::endl;
-            std::cout << "SET:" << std::endl;
-            for(int j = 0; j < size; j++){
-                std::cout << set[j].index << " " << set[j].arrival << " " << set[j].burstTime << " " << set[j].priority << std::endl;
-            }
-            std::cout << "TIME: " << time << std::endl;
-            std::cout << std::endl;*/
+            sort(set.begin(), set.end(), comparePriority);
 
             int index = i;
             int runTime = 0;
@@ -180,9 +203,9 @@ void p(std::vector<Process> set){
             }
 
             if(set[index].burstTime > 0){
-                std::cout << time << " " << set[index].index << " " << runTime << std::endl;
+                cout << time << " " << set[index].index << " " << runTime << endl;
             } else{
-                std::cout << time << " " << set[index].index << " " << runTime << "X" << std::endl;
+                cout << time << " " << set[index].index << " " << runTime << "X" << endl;
             }
 
             time += runTime;

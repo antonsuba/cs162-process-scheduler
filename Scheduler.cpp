@@ -1,7 +1,12 @@
-#include "SJF.h"
 #include <iostream>
-#include <vector>
+#include <cstdio>
+#include <string>
+#include <stdlib.h>
 #include <queue>
+#include <vector>
+#include <algorithm>
+
+#include "Algorithms.h"
 
 using namespace std;
 
@@ -20,7 +25,7 @@ int main(){
         if(algorithm == "RR"){
             cin >> interval;
         }
-        priority_queue<Process, vector<Process>, SJFComparator> queue;
+
         //Sort processes by arriaval time
         for(int j = 0; j < processCount; j++){
             int arrival, burstTime, priority;
@@ -28,10 +33,9 @@ int main(){
 
             Process process(j + 1, arrival, burstTime, priority);
             
-            queue.push(process);
             set.push_back(process);
         }
-
+        
         int time = 0;
         while(!queue.empty()){
             Process p = queue.top();
@@ -47,7 +51,7 @@ int main(){
         if(algorithm == "FCFS"){
             fcfs(set);
         } else if(algorithm == "SJF"){
-            //sjf(set);
+            sjf(set);
         } else if(algorithm == "SRTF"){
             srtf(set);
         } else if(algorithm == "P"){
