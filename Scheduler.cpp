@@ -16,14 +16,14 @@ int main(){
     cin >> testCases;
 
     for(int i= 0; i < testCases; i++){
-        int processCount, interval;
+        int processCount, quantum;
         string algorithm;
 
         cin >> processCount >> algorithm;
         vector<Process> set;
 
         if(algorithm == "RR"){
-            cin >> interval;
+            cin >> quantum;
         }
 
         //Sort processes by arriaval time
@@ -45,7 +45,7 @@ int main(){
         } else if(algorithm == "P"){
             p(set);
         } else if(algorithm == "RR"){
-            //rr(set);
+            rr(set, quantum);
         }
     }
 

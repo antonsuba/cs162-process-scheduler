@@ -21,9 +21,6 @@ struct Process{
 // Helper Functions
 //-------------------------
 bool compareArrivalTime(Process p1, Process p2){
-    if(p1.arrival == p2.arrival){
-        return p1.burstTime < p2.burstTime;
-    }
     return p1.arrival < p2.arrival;
 }
 
@@ -39,7 +36,7 @@ bool comparePriority(Process p1, Process p2){
     return (p1.arrival <= p2.arrival && p1.priority < p2.priority);
 }
 
-int searchBurstCoverage(vector<Process> set, int left, int right, int burstTime){
+int searchCoverage(vector<Process> set, int left, int right, int burstTime){
     int retVal = 0;
     //cout << "left:" << left << "  right:" << right << " burst:" << burstTime << endl;
     while(left <= right){
@@ -54,6 +51,13 @@ int searchBurstCoverage(vector<Process> set, int left, int right, int burstTime)
         }
     }
     return retVal;
+}
+
+void pushProcesses(queue<Process>& q, vector<Process> set, int start, int next){
+    for(int i = start; i < next; i++){
+        //cout << "push:" << i << endl;
+        q.push(set[i]);
+    }
 }
 
 //-------------------------
@@ -76,22 +80,19 @@ void fcfs(vector<Process> set){
 
 void sjf(vector<Process> set){
     int size = set.size();
-    int quantum = 0;
-    int runTime = 0;
+    int time = 0;
     int next =  0;
 
     sort(set.begin(), set.end(), compareArrivalTime);
 
     for(int i = 0; i < size; i++){
-        //cout << "runTime:" << runTime << endl;
-        cout << runTime << " " << set[i].index << " " << set[i].burstTime << "X" << endl;
-        runTime+= set[i].burstTime;
+        cout << time << " " << set[i].index << " " << set[i].burstTime << "X" << endl;
+        time+= set[i].burstTime;
 
-        if(set[next].arrival <= runTime){
-            //Sort processes covered by current run time
+        if(set[next].arrival <= time){
             if(i < size - 1){
-                int burstCoverage = searchBurstCoverage(set, i + 1, size - 1, runTime);
-                if(burstCoverage >= 0){
+                int burstCoverage = searchCoverage(set, i + 1, size - 1, time);
+                if(burstCoverage > 0){
                     sort(set.begin()+i+1, set.begin()+burstCoverage+1, compareBurstTime);
                     next = burstCoverage + 1;
                 }
@@ -209,6 +210,96 @@ void p(vector<Process> set){
             }
 
             time += runTime;
+        }
+    }
+}
+
+// void rr(vector<Process> set, int quantum){
+//     int size = set.size();
+//     int time = 0;
+//     int front = 0;
+//     int rear = size - 1;
+
+//     cout << "quantum:" << quantum << endl;
+
+//     sort(set.begin(), set.end(), compareArrivalTime);
+
+//     while(front != rear){
+//         //cout << "front:" << front << " rear:" << rear << endl;
+//         if(set[front].arrival )
+
+//         int burstTime = set[front].burstTime;
+
+//         if(burstTime <= quantum  && burstTime != 0){
+//             cout << time << " " << set[front].index << " " << burstTime << "X" << endl;
+//             set[front].burstTime = 0;
+//             time += burstTime;
+
+//             if(front == rear) continue;
+//         }
+//         else if(burstTime != 0){
+//             int burstRemainder = burstTime - quantum;
+//             cout << time << " " << set[front].index << " " << quantum << endl;
+//             set[front].burstTime = burstRemainder;
+//             time += quantum;
+
+//             rear = front;
+//         }
+
+//         if(front == size - 1){
+//             front = 0;
+//         }
+//         else{
+//             front++;
+//         }
+//     }
+// }
+
+void rr(vector<Process> set, int quantum){
+    int size = set.size();
+    int time = 0;
+    int processed = 0;
+    int start = 0;
+    int next = 1;
+
+    sort(set.begin(), set.end(), compareArrivalTime);
+    
+    queue<Process> q;
+    pushProcesses(q, set, start, next);
+
+    while(processed < size - 1){
+        //cout << "processing:" << processed << endl;
+        //cout << "start:" << start << " next:" << next << endl;
+
+        int nextArrival = set[next].arrival;
+        //cout << "nextArrival:" << nextArrival << "time:" << time << endl;
+        bool requeue = false;
+        while(time < nextArrival && processed < size){
+            Process process = q.front();
+            q.pop();
+
+            if(process.burstTime <= quantum){
+                cout << time << " " << process.index << " " << process.burstTime << "X" << endl;
+                time += process.burstTime;
+                processed++;
+            }
+            else{
+                cout << time << " " << process.index << " " << quantum << endl;
+                time += quantum;
+
+                process.burstTime -= quantum;
+                requeue = true;
+            }
+
+            if(time >= nextArrival) {
+                start = next;
+                next = searchCoverage(set, next, size - 1, time) + 1;
+                pushProcesses(q, set, start, next);
+            }
+            if(requeue){
+                q.push(process);
+                requeue = false;
+            }
         }
     }
 }
