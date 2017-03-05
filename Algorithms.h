@@ -18,7 +18,7 @@ struct Process{
 };
 
 //-------------------------
-// Helper Functions
+// Helper Methods
 //-------------------------
 bool compareArrivalTime(Process p1, Process p2){
     return p1.arrival < p2.arrival;
@@ -214,53 +214,13 @@ void p(vector<Process> set){
     }
 }
 
-// void rr(vector<Process> set, int quantum){
-//     int size = set.size();
-//     int time = 0;
-//     int front = 0;
-//     int rear = size - 1;
-
-//     cout << "quantum:" << quantum << endl;
-
-//     sort(set.begin(), set.end(), compareArrivalTime);
-
-//     while(front != rear){
-//         //cout << "front:" << front << " rear:" << rear << endl;
-//         if(set[front].arrival )
-
-//         int burstTime = set[front].burstTime;
-
-//         if(burstTime <= quantum  && burstTime != 0){
-//             cout << time << " " << set[front].index << " " << burstTime << "X" << endl;
-//             set[front].burstTime = 0;
-//             time += burstTime;
-
-//             if(front == rear) continue;
-//         }
-//         else if(burstTime != 0){
-//             int burstRemainder = burstTime - quantum;
-//             cout << time << " " << set[front].index << " " << quantum << endl;
-//             set[front].burstTime = burstRemainder;
-//             time += quantum;
-
-//             rear = front;
-//         }
-
-//         if(front == size - 1){
-//             front = 0;
-//         }
-//         else{
-//             front++;
-//         }
-//     }
-// }
-
 void rr(vector<Process> set, int quantum){
     int size = set.size();
     int time = 0;
     int processed = 0;
     int start = 0;
     int next = 1;
+    int modifier = 0;
 
     sort(set.begin(), set.end(), compareArrivalTime);
     
@@ -268,23 +228,27 @@ void rr(vector<Process> set, int quantum){
     pushProcesses(q, set, start, next);
 
     while(processed < size - 1){
-        //cout << "processing:" << processed << endl;
-        //cout << "start:" << start << " next:" << next << endl;
-
         int nextArrival = set[next].arrival;
-        //cout << "nextArrival:" << nextArrival << "time:" << time << endl;
+        
         bool requeue = false;
         while(time < nextArrival && processed < size){
             Process process = q.front();
             q.pop();
 
             if(process.burstTime <= quantum){
-                cout << time << " " << process.index << " " << process.burstTime << "X" << endl;
+                cout << time - (quantum * modifier) << " " << process.index << " " << process.burstTime + (quantum * modifier) << "X" << endl;
                 time += process.burstTime;
+                modifier = 0;
                 processed++;
             }
             else{
-                cout << time << " " << process.index << " " << quantum << endl;
+                if(time + quantum >= nextArrival || q.size() > 0){
+                    cout << time - (quantum * modifier) << " " << process.index << " " << quantum + (quantum * modifier) << endl;
+                    modifier = 0;
+                }
+                else{
+                    modifier++;
+                }
                 time += quantum;
 
                 process.burstTime -= quantum;
