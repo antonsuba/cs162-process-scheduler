@@ -2,6 +2,8 @@
 #include <cstdio>
 #include <string>
 #include <stdlib.h>
+#include <iostream>
+#include <deque>
 #include <queue>
 #include <vector>
 #include <algorithm>
@@ -16,6 +18,8 @@ int main(){
     cin >> testCases;
 
     for(int i= 0; i < testCases; i++){
+        cout << i + 1 << endl;
+
         int processCount, quantum;
         string algorithm;
 
@@ -26,7 +30,6 @@ int main(){
             cin >> quantum;
         }
 
-        //Sort processes by arriaval time
         for(int j = 0; j < processCount; j++){
             int arrival, burstTime, priority;
             cin >> arrival >> burstTime >> priority;
