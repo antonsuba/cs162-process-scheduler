@@ -219,7 +219,7 @@ void rr(vector<Process> set, int quantum){
     deque<Process> q;
     pushProcesses(q, set, start, next, preempted);
 
-    while(processed < size - 1){
+    while(processed < size){
         int nextArrival = set[next].arrival;
         
         bool requeue = false;
