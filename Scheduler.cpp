@@ -38,7 +38,9 @@ int main(){
             
             set.push_back(process);
         }
-         
+        
+        cout << i+1 << endl;
+
         if(algorithm == "FCFS"){
             fcfs(set);
         } else if(algorithm == "SJF"){
