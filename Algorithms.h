@@ -85,6 +85,9 @@ void sjf(vector<Process> set){
     sort(set.begin(), set.end(), compareArrivalTime);
 
     for(int i = 0; i < size; i++){
+        if(set[i].arrival > time){
+            time = set[i].arrival;
+        }
         cout << time << " " << set[i].index << " " << set[i].burstTime << "X" << endl;
         time+= set[i].burstTime;
 
@@ -226,6 +229,10 @@ void rr(vector<Process> set, int quantum){
         while(time < nextArrival && processed < size){
             Process process = q.front();
             q.pop_front();
+
+            if(process.arrival > time){
+                time = process.arrival;
+            }
 
             if(process.burstTime <= quantum){
                 cout << time - (quantum * modifier) << " " << process.index << " " << process.burstTime + (quantum * modifier) << "X" << endl;
