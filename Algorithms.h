@@ -53,10 +53,9 @@ int searchCoverage(vector<Process> set, int left, int right, int burstTime){
     return retVal;
 }
 
-void pushProcesses(queue<Process>& q, vector<Process> set, int start, int next){
+void pushProcesses(deque<Process>& q, vector<Process> set, int start, int next, int preempted){
     for(int i = start; i < next; i++){
-        //cout << "push:" << i << endl;
-        q.push(set[i]);
+        q.emplace(q.end() - preempted, set[i]);
     }
 }
 
@@ -115,14 +114,6 @@ void srtf(vector<Process> set){
             }
 
             sort(set.begin(), set.end(), compareShortestRemaining);
-            
-            /*cout << endl;
-            cout << "SET:" << endl;
-            for(int j = 0; j < size; j++){
-                cout << set[j].index << " " << set[j].arrival << " " << set[j].burstTime << " " << set[j].priority << endl;
-            }
-            cout << "TIME: " << time << endl;
-            cout << endl;*/
 
             int index = i;
             int runTime = 0;
@@ -221,24 +212,28 @@ void rr(vector<Process> set, int quantum){
     int start = 0;
     int next = 1;
     int modifier = 0;
+    int preempted = 0;
 
     sort(set.begin(), set.end(), compareArrivalTime);
     
-    queue<Process> q;
-    pushProcesses(q, set, start, next);
+    deque<Process> q;
+    pushProcesses(q, set, start, next, preempted);
 
-    while(processed < size - 1){
+    while(processed < size){
         int nextArrival = set[next].arrival;
         
         bool requeue = false;
         while(time < nextArrival && processed < size){
             Process process = q.front();
-            q.pop();
+            q.pop_front();
 
             if(process.burstTime <= quantum){
                 cout << time - (quantum * modifier) << " " << process.index << " " << process.burstTime + (quantum * modifier) << "X" << endl;
                 time += process.burstTime;
                 modifier = 0;
+                if(q.size() + 1 <= preempted){
+                    preempted--;
+                }
                 processed++;
             }
             else{
@@ -258,10 +253,11 @@ void rr(vector<Process> set, int quantum){
             if(time >= nextArrival) {
                 start = next;
                 next = searchCoverage(set, next, size - 1, time) + 1;
-                pushProcesses(q, set, start, next);
+                pushProcesses(q, set, start, next, preempted);
             }
             if(requeue){
-                q.push(process);
+                q.push_back(process);
+                preempted++;
                 requeue = false;
             }
         }
