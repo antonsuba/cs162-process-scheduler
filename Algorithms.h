@@ -20,23 +20,23 @@ struct Process{
 //-------------------------
 // Helper Methods
 //-------------------------
-bool compareArrivalTime(Process p1, Process p2){
+bool compareArrivalTime(Process& p1, Process& p2){
     return p1.arrival < p2.arrival;
 }
 
-bool compareBurstTime(Process p1, Process p2){
+bool compareBurstTime(Process& p1, Process& p2){
     return p1.burstTime < p2.burstTime;
 }
 
-bool compareShortestRemaining(Process p1, Process p2){
+bool compareShortestRemaining(Process& p1, Process& p2){
     return (p1.arrival <= p2.arrival && p1.burstTime < p2.burstTime);
 }
 
-bool comparePriority(Process p1, Process p2){
+bool comparePriority(Process& p1, Process& p2){
     return (p1.arrival <= p2.arrival && p1.priority < p2.priority);
 }
 
-int searchCoverage(vector<Process> set, int left, int right, int burstTime){
+int searchCoverage(vector<Process>& set, int left, int right, int burstTime){
     int retVal = 0;
     //cout << "left:" << left << "  right:" << right << " burst:" << burstTime << endl;
     while(left <= right){
@@ -53,7 +53,7 @@ int searchCoverage(vector<Process> set, int left, int right, int burstTime){
     return retVal;
 }
 
-void pushProcesses(deque<Process>& q, vector<Process> set, int start, int next, int preempted){
+void pushProcesses(deque<Process>& q, vector<Process>& set, int start, int next, int preempted){
     for(int i = start; i < next; i++){
         q.emplace(q.end() - preempted, set[i]);
     }
@@ -62,7 +62,7 @@ void pushProcesses(deque<Process>& q, vector<Process> set, int start, int next, 
 //-------------------------
 // Scheduling Algorithms
 //-------------------------
-void fcfs(vector<Process> set){
+void fcfs(vector<Process>& set){
     int size = set.size();
     int time = 0;
 
@@ -77,7 +77,7 @@ void fcfs(vector<Process> set){
     }
 }
 
-void sjf(vector<Process> set){
+void sjf(vector<Process>& set){
     int size = set.size();
     int time = 0;
     int next =  0;
@@ -103,7 +103,7 @@ void sjf(vector<Process> set){
     }
 }
 
-void srtf(vector<Process> set){
+void srtf(vector<Process>& set){
     int size = set.size();
     int time = 0;
     
@@ -156,7 +156,7 @@ void srtf(vector<Process> set){
 
 }
 
-void p(vector<Process> set){
+void p(vector<Process>& set){
     int size = set.size();
     int time = 0;
 
@@ -208,7 +208,7 @@ void p(vector<Process> set){
     }
 }
 
-void rr(vector<Process> set, int quantum){
+void rr(vector<Process>& set, int quantum){
     int size = set.size();
     int time = 0;
     int processed = 0;

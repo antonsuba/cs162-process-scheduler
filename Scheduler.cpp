@@ -18,8 +18,6 @@ int main(){
     cin >> testCases;
 
     for(int i= 0; i < testCases; i++){
-        cout << i + 1 << endl;
-
         int processCount, quantum;
         string algorithm;
 
