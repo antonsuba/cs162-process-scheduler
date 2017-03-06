@@ -121,7 +121,7 @@ void srtf(vector<Process>& set){
             int index = i;
             int runTime = 0;
 
-            if(time < set[i+1].arrival && set[i+1].arrival < time + set[i].burstTime && set[i+1].burstTime < set[i].burstTime){
+            if(time < set[i+1].arrival && set[i+1].arrival < time + set[i].burstTime && time + set[i+1].burstTime < (time + set[i].burstTime) - (set[i+1].arrival - time)){
                 runTime = set[i+1].arrival - time;
                 i--;
             } else{
