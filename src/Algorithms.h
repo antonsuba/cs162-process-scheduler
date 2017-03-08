@@ -50,12 +50,19 @@ int searchCoverage(vector<Process>& set, int left, int right, int burstTime){
             left = middle + 1;
         }
     }
+    //cout << "retval:" << retVal << endl;
     return retVal;
 }
 
-void pushProcesses(deque<Process>& q, vector<Process>& set, int start, int next, int preempted){
-    for(int i = start; i < next; i++){
-        q.emplace(q.end() - preempted, set[i]);
+void pushProcesses(deque<Process>& q, vector<Process>& set, int start, int next, int preempted, int size){
+    int input = 0;
+    for(int i = start; i < next; i++){ 
+        if(size - preempted < 0){
+            q.emplace(q.begin(), set[i]);
+        }
+        else{
+            q.emplace(q.end() - preempted, set[i]); 
+        }
     }
 }
 
@@ -220,15 +227,20 @@ void rr(vector<Process>& set, int quantum){
     sort(set.begin(), set.end(), compareArrivalTime);
     
     deque<Process> q;
-    pushProcesses(q, set, start, next, preempted);
+    pushProcesses(q, set, start, next, preempted, 0);
 
     while(processed < size){
+        //cout << "A" << endl;
         int nextArrival = set[next].arrival;
         
         bool requeue = false;
         while(time < nextArrival && processed < size){
+            //cout << "b" << endl;
+            //cout << "preempted" << preempted << endl;
             Process process = q.front();
             q.pop_front();
+
+            //cout << "Process:" << process.index << " " << process.burstTime << endl;
 
             if(process.arrival > time){
                 time = process.arrival;
@@ -246,6 +258,7 @@ void rr(vector<Process>& set, int quantum){
             else{
                 if(time + quantum >= nextArrival || q.size() > 0){
                     cout << time - (quantum * modifier) << " " << process.index << " " << quantum + (quantum * modifier) << endl;
+                    preempted++;
                     modifier = 0;
                 }
                 else{
@@ -256,17 +269,17 @@ void rr(vector<Process>& set, int quantum){
                 process.burstTime -= quantum;
                 requeue = true;
             }
-
+            if(requeue){
+                q.push_back(process);
+                //preempted++;
+                requeue = false;
+            }
             if(time >= nextArrival) {
                 start = next;
                 next = searchCoverage(set, next, size - 1, time) + 1;
-                pushProcesses(q, set, start, next, preempted);
+                pushProcesses(q, set, start, next, preempted, q.size());
             }
-            if(requeue){
-                q.push_back(process);
-                preempted++;
-                requeue = false;
-            }
+            
         }
     }
 }
